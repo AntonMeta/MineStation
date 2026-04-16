@@ -1,0 +1,30 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    container_name: mc-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      MEMORY: "4G"
+      ENABLE_RCON: "TRUE"
+      RCON_PASSWORD: "${MC_RCON_PASSWORD}"
+      RCON_PORT: 25575
+    volumes:
+      - ./minecraft_data:/data
+    restart: unless-stopped
+
+  agent:
+    build: ./agent
+    container_name: mc-controller
+    depends_on:
+      - minecraft
+    environment:
+      - RCON_HOST=minecraft
+      - RCON_PASSWORD="${MC_RCON_PASSWORD}"
+      - RCON_PORT=25575
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
