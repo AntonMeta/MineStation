@@ -21,3 +21,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/fonts/
+  fonts:
+      - family: Rajdhani
+        fonts:
+          - asset: assets/fonts/Rajdhani-Bold.ttf
+            weight: 700
+      - family: Inter
+        fonts:
+          - asset: assets/fonts/Inter_24pt-Regular.ttf
+      - family: JetBrainsMono
+        fonts:
+          - asset: assets/fonts/JetBrainsMono-Regular.ttf

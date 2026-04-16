@@ -2,44 +2,115 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-void main() => runApp(const MaterialApp(home: MineDroidHome()));
+import 'theme/app_theme.dart';
 
-class MineDroidHome extends StatefulWidget {
-  const MineDroidHome({super.key});
+void main() => runApp(const MineStationApp());
+
+class MineStationApp extends StatelessWidget {
+  const MineStationApp({super.key});
 
   @override
-  State<MineDroidHome> createState() => _MineDroidHomeState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MineStation',
+      // TUTAJ PODPINASZ SWÓJ MOTYW:
+      theme: AppTheme.theme,
+      debugShowCheckedModeBanner: false,
+      home: const DashboardScreen(),
+    );
+  }
 }
 
-class _MineDroidHomeState extends State<MineDroidHome> {
-  String _status = "Kliknij, aby sprawdzić agenta";
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
 
-  Future<void> fetchStatus() async {
-    try {
-      // Jeśli odpalasz na Macu i Agent jest na Macu, użyj localhost
-      final response = await http.get(Uri.parse('http://localhost:3000/status'));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() => _status = "Serwer: ${data['serverName']}\nStatus: ${data['status']}");
-      }
-    } catch (e) {
-      setState(() => _status = "Błąd połączenia: $e");
-    }
-  }
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  // Mock data
+  final String _serverName = "MACBOOK-AIR";
+  final String _status = "Online";
+  final List<String> _players = ["Steve", "Alex", "Ziemniak"];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('MineDroid Controller')),
-      body: Center(
+      appBar: AppBar(
+        title: const Text('MINESTATION'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        children: [
+          _buildStatusCard(),
+          _buildQuickActions(),
+          _buildPlayerList(),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildStatusCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_status, textAlign: TextAlign.center),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: fetchStatus, child: const Text('Sprawdź Agenta')),
+            Text(
+              "SYSTEM STATUS",
+
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "HOST: $_serverName",
+
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "STATUS: $_status",
+
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.accent.withValues(alpha: 0.2),
+                foregroundColor: AppTheme.accent,
+                side: const BorderSide(color: AppTheme.accent),
+              ),
+              onPressed: () {},
+              child: const Text("STOP SERVER"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlayerList() {
+    return Card(
+      child: Column(
+        children: _players.map((p) => ListTile(
+          leading: const Icon(Icons.person, color: AppTheme.primary),
+          title: Text(p, style: const TextStyle(fontWeight: FontWeight.bold)),
+          trailing: const Icon(Icons.more_vert, color: AppTheme.textMuted),
+        )).toList(),
       ),
     );
   }
