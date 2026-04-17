@@ -19,3 +19,6 @@ agent/npm-debug.log
 
 # Secrets
 .env
+
+#mc-data
+minecraft_data/

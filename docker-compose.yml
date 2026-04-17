@@ -22,7 +22,7 @@ services:
       - minecraft
     environment:
       - RCON_HOST=minecraft
-      - RCON_PASSWORD="${MC_RCON_PASSWORD}"
+      - RCON_PASSWORD=${MC_RCON_PASSWORD}
       - RCON_PORT=25575
       - PORT=3000
     ports:
