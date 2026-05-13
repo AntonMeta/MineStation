@@ -4,18 +4,32 @@ const app = express();
 
 app.use(express.json());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+const API_KEY = process.env.API_KEY;
+
 const rconConfig = {
     host: process.env.RCON_HOST,
     port: parseInt(process.env.RCON_PORT),
-    password: process.env.RCON_PASSWORD
+    password: process.env.RCON_PASSWORD,
+    timeout: 5000
 };
 
 // fail-fast
-if (!rconConfig.password || !rconConfig.host) {
-    console.error("BŁĄD: Brak zmiennych RCON_HOST lub RCON_PASSWORD w środowisku!");
+if (!rconConfig.password || !rconConfig.host || !API_KEY) {
+    console.error("BŁĄD: Brak zmiennych RCON_HOST, RCON_PASSWORD lub API_KEY!");
     process.exit(1);
 }
+
+
+app.use((req, res, next) => {
+    const clientKey = req.headers['x-api-key'] || req.query.key;
+
+    if (clientKey !== API_KEY) {
+        console.warn(`Zablokowano próbę dostępu z nieznanym kluczem: ${clientKey}`);
+        return res.status(401).json({ success: false, error: "Brak dostępu. Błędny klucz API." });
+    }
+    next();
+});
 
 async function sendMC(command) {
     let rcon;
@@ -24,7 +38,8 @@ async function sendMC(command) {
         const res = await rcon.send(command);
         return { success: true, response: res };
     } catch (err) {
-        return { success: false, error: err.message };
+        console.error(`RCON Błąd (${command}):`, err.message);
+        return { success: false, error: "Błąd komunikacji z serwerem MC: " + err.message };
     } finally {
         if (rcon) rcon.end();
     }
@@ -43,16 +58,22 @@ app.get('/status', async (req, res) => {
 app.post('/command', async (req, res) => {
     const { action, target, value } = req.body;
     let cmd = "";
+
     switch(action) {
         case "op": cmd = `op ${target}`; break;
         case "day": cmd = `time set day`; break;
         case "msg": cmd = `say ${value}`; break;
         default: cmd = target;
     }
+
+    if (!cmd) return res.status(400).json({ success: false, error: "Brak komendy do wykonania" });
+
     const result = await sendMC(cmd);
+    if (!result.success) return res.status(500).json(result);
+
     res.json(result);
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`MineStation Agent uzbrojony na porcie ${PORT}`);
+    console.log(`MineStation Agent UZBROJONY i ZABEZPIECZONY na porcie ${PORT}`);
 });
