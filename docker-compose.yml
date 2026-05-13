@@ -11,6 +11,7 @@ services:
       ENABLE_RCON: "TRUE"
       RCON_PASSWORD: "${MC_RCON_PASSWORD}"
       RCON_PORT: 25575
+      SEED: "712262452098460"
     volumes:
       - ./minecraft_data:/data
     restart: unless-stopped
@@ -24,13 +25,16 @@ services:
     depends_on:
       - minecraft
     environment:
-      - RCON_HOST=minecraft
+      - RCON_HOST=172.20.0.10
       - RCON_PASSWORD=${MC_RCON_PASSWORD}
       - RCON_PORT=25575
       - PORT=3000
+      - API_KEY=${AGENT_API_KEY}
     ports:
       - "3000:3000"
     restart: unless-stopped
+    networks:
+      - mc-net
   playit:
     image: ghcr.io/playit-cloud/playit-agent:0.17
     container_name: mc-tunnel
