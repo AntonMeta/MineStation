@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // --- PALETA KOLORÓW (MineStation Palette) ---
   static const Color background = Color(0xFF0D0216); // Głębsza czerń
   static const Color surface = Color(0xFF19082B);    // Kolor kart
   static const Color primary = Color(0xFFBE18FF);    // Neonowa zieleń (Matrix/MC)
@@ -18,13 +17,13 @@ class AppTheme {
       fontFamily: 'Inter',
 
       textTheme: const TextTheme(
-        // NAGŁÓWKI: Rajdhani
+        // NAGŁÓWKI
         displayLarge: TextStyle(
           fontFamily: 'Rajdhani',
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: textMain,
-          letterSpacing: 3.5, // "Kosmiczny" odstęp
+          letterSpacing: 3.5,
         ),
         titleLarge: TextStyle(
           fontFamily: 'Rajdhani',
@@ -34,14 +33,14 @@ class AppTheme {
           letterSpacing: 1.5,
         ),
 
-        // TREŚĆ: Inter
+        // TREŚĆ
         bodyMedium: TextStyle(
           fontFamily: 'Inter',
           fontSize: 15,
           color: textMain,
         ),
 
-        // DANE / LOGI: JetBrains Mono
+        // DANE / LOGI
         labelSmall: TextStyle(
           fontFamily: 'JetBrainsMono',
           fontSize: 12,
@@ -49,7 +48,7 @@ class AppTheme {
         ),
       ),
 
-      // Stylizacja Kart (Cards)
+      // Cards
       cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
